@@ -4,13 +4,14 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const cookieParser = require("cookie-parser");
-const morgan = require("morgan"); // ✅ Logs requests
+const morgan = require("morgan");
 const connectDB = require("./config/db");
+const admin = require("./config/firebaseConfig"); // Firebase setup
 const blogRoutes = require("./routes/blogRoutes");
 const questionRoutes = require("./routes/questionRoutes");
 const userRoutes = require("./routes/userRoutes");
 
-// Load environment variables before connecting to DB
+// Load environment variables
 dotenv.config();
 connectDB();
 
@@ -26,11 +27,10 @@ if (!fs.existsSync(uploadsDir)) {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(morgan("dev")); // ✅ Logs incoming requests
+app.use(morgan("dev"));
 
-// CORS Configuration to Allow Cookies
+// CORS Configuration
 const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:5173"];
-
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -40,11 +40,11 @@ app.use(
         callback(new Error("CORS not allowed for this origin"));
       }
     },
-    credentials: true, // ✅ Required for cookies
+    credentials: true,
   })
 );
 
-// Allow Credentials in Responses & Handle Preflight Requests
+// Set Headers for CORS Preflight
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -54,14 +54,13 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  // Handle preflight requests
   if (req.method === "OPTIONS") {
     return res.sendStatus(204);
   }
   next();
 });
 
-// Static file serving for uploads
+// Serve Static Files
 app.use("/uploads", express.static(uploadsDir));
 
 // Routes
@@ -79,7 +78,7 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route Not Found" });
 });
 
-// Centralized Error Handling Middleware
+// Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error("🔥 Server Error:", process.env.NODE_ENV === "development" ? err.stack : err.message);
   res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
