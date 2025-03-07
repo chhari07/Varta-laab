@@ -6,7 +6,7 @@ const Blog = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [newComment, setNewComment] = useState("");
 
-  const API_URL = "http://localhost:5000/api/blogs";
+  const API_URL = "https://varta-laab-1-suiz.onrender.com/api/blogs";
   const IMAGE_BASE_URL = "http://localhost:5000/uploads/";
   const defaultImage = "/default-image.jpg";
 
