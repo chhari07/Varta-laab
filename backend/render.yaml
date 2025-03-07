@@ -4,7 +4,7 @@ services:
   runtime: node
   rootDir: backend
   buildCommand: npm install
-  startCommand: nodemon server.js
+  startCommand: node server.js
 
 - type: web
   name: app-community
@@ -12,3 +12,5 @@ services:
   rootDir: community/docker
   dockerfilePath: ./Dockerfile
   dockerContext: .
+  buildCommand: curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs && npm install
+  startCommand: node server.js
