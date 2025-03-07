@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon server.js",
-    "build": "babel index.js -d dist",
-    "prod": " nodemon  server.js"
+   
   },
   "keywords": [],
   "author": "",
