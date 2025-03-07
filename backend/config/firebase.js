@@ -1,21 +1,15 @@
 const admin = require("firebase-admin");
-const dotenv = require("dotenv");
-const fs = require("fs");
-const path = require("path");
 
-dotenv.config();
-
-const serviceAccountPath = path.resolve(__dirname, "firebaseServiceAccountKey.json");
-
-// Check if the file exists
-if (!fs.existsSync(serviceAccountPath)) {
-  console.error("❌ Firebase service account key is missing!");
-  process.exit(1);
+// Ensure environment variable exists
+if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+  throw new Error("Missing FIREBASE_SERVICE_ACCOUNT_KEY in .env file");
 }
 
-// Initialize Firebase Admin SDK
+// Parse JSON from environment variable
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+
 admin.initializeApp({
-  credential: admin.credential.cert(require(serviceAccountPath)),
+  credential: admin.credential.cert(serviceAccount),
 });
 
-module.exports = { admin };
+module.exports = admin;
